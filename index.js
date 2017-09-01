@@ -494,6 +494,43 @@ module.exports = (function () {
                             });
                             whereData.push('(' + whereArr.join(' OR ') + ')');
                         }
+                        else if (_.isPlainObject(param)) {
+                            _.forEach(param, function(value, key) {
+                                if (key === 'contains') {
+                                    whereData.push(column + ' LIKE %?%');
+                                    if (collection.definition[column].type === 'boolean') params.push(param === true ? 1 : 0);
+                                    else params.push(value);
+                                }
+                                else if (key === 'endsWith') {
+                                    whereData.push(column + ' LIKE ?%');
+                                    if (collection.definition[column].type === 'boolean') params.push(param === true ? 1 : 0);
+                                    else params.push(value);
+                                }
+                                else {
+                                    if (key === 'lessThan') {
+                                        key = '<';
+                                    }
+                                    else if (key === 'lessThanOrEqual') {
+                                        key = '<=';
+                                    }
+                                    else if (key === 'greaterThan') {
+                                        key = '>';
+                                    }
+                                    else if (key === 'greaterThanEqual') {
+                                        key = '>=';
+                                    }
+                                    else if (key === 'not' || key === '!') {
+                                        key = '<>';
+                                    }
+                                    else if (key === 'startsWith') {
+                                        key = 'LIKE';
+                                    }
+                                    whereData.push(column + ' ' + key + ' ?');
+                                    if (collection.definition[column].type === 'boolean') params.push(param === true ? 1 : 0);
+                                    else params.push(value);
+                                }
+                            });
+                        }
                         else {
                             if (collection.definition.hasOwnProperty(column)) {
                                 whereData.push(column + ' = ?');
