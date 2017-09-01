@@ -436,6 +436,9 @@ module.exports = (function () {
                     };
 
                     if (_.isArray(data) && data.length > 0) openConnection.query(query, data, callback);
+                    if(process.env['LOG_QUERIES']) {
+                        console.log('QUERY: ' + query);
+                    }
                     else openConnection.query(query, callback);
                 },
                 operationCallback = function (err, conn) {
@@ -514,6 +517,9 @@ module.exports = (function () {
                     if (sortQuery.length > 0) sortQuery = ' ORDER BY ' + sortQuery;
 
                     sqlQuery += selectQuery + fromQuery + whereQuery + sortQuery + limitQuery;
+                    if(process.env['LOG_QUERIES']) {
+                        console.log('QUERY: ' + sqlQuery);
+                    }
                     openConnection.query(sqlQuery, params, function (err, result) {
                         me.closeConnection(openConnection);
                         if (err) return cb(err);
@@ -570,7 +576,11 @@ module.exports = (function () {
                         }
                     });
 
-                    openConnection.query('SELECT ' + selectQuery + ' FROM FINAL TABLE (INSERT INTO ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + ' (' + columns.join(',') + ') VALUES (' + questions.join(',') + '))', params, function (err, results) {
+                    var sqlQuery = 'SELECT ' + selectQuery + ' FROM FINAL TABLE (INSERT INTO ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + ' (' + columns.join(',') + ') VALUES (' + questions.join(',') + '))'
+                    if(process.env['LOG_QUERIES']) {
+                        console.log('QUERY: ' + sqlQuery);
+                    }
+                    openConnection.query(sqlQuery, params, function (err, results) {
                         me.closeConnection(openConnection);
                         if (err) cb(err);
                         else cb(null, results[0]);
@@ -634,6 +644,9 @@ module.exports = (function () {
 
                     sqlQuery = 'SELECT ' + selectQuery + ' FROM FINAL TABLE (UPDATE ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + setQuery + whereQuery + ')';
 
+                    if(process.env['LOG_QUERIES']) {
+                        console.log('QUERY: ' + sqlQuery);
+                    }
                     openConnection.query(sqlQuery, params, function (err, results) {
                         me.closeConnection(openConnection);
                         if (err) return cb(err);
@@ -681,7 +694,11 @@ module.exports = (function () {
 
                     if (whereQuery.length > 0) whereQuery = ' WHERE ' + whereQuery;
 
-                    openConnection.query('DELETE FROM ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + whereQuery, params, function (err, result) {
+                    var sqlQuery = 'DELETE FROM ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + whereQuery;
+                    if(process.env['LOG_QUERIES']) {
+                        console.log('QUERY: ' + sqlQuery);
+                    }
+                    openConnection.query(sqlQuery, params, function (err, result) {
                         me.closeConnection(openConnection);
                         if (err) return cb(err);
                         cb(null, result);
