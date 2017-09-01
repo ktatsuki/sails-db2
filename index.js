@@ -437,7 +437,7 @@ module.exports = (function () {
 
                     if (_.isArray(data) && data.length > 0) openConnection.query(query, data, callback);
                     if(process.env['LOG_QUERIES']) {
-                        console.log('QUERY: ' + query);
+                        console.log('## Query: ' + sqlQuery + ';');
                     }
                     else openConnection.query(query, callback);
                 },
@@ -518,7 +518,7 @@ module.exports = (function () {
 
                     sqlQuery += selectQuery + fromQuery + whereQuery + sortQuery + limitQuery;
                     if(process.env['LOG_QUERIES']) {
-                        console.log('QUERY: ' + sqlQuery);
+                        console.log('## Query: ' + sqlQuery + '; Params: ', params);
                     }
                     openConnection.query(sqlQuery, params, function (err, result) {
                         me.closeConnection(openConnection);
@@ -578,7 +578,7 @@ module.exports = (function () {
 
                     var sqlQuery = 'SELECT ' + selectQuery + ' FROM FINAL TABLE (INSERT INTO ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + ' (' + columns.join(',') + ') VALUES (' + questions.join(',') + '))'
                     if(process.env['LOG_QUERIES']) {
-                        console.log('QUERY: ' + sqlQuery);
+                        console.log('## Query: ' + sqlQuery + '; Params: ', params);
                     }
                     openConnection.query(sqlQuery, params, function (err, results) {
                         me.closeConnection(openConnection);
@@ -645,7 +645,7 @@ module.exports = (function () {
                     sqlQuery = 'SELECT ' + selectQuery + ' FROM FINAL TABLE (UPDATE ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + setQuery + whereQuery + ')';
 
                     if(process.env['LOG_QUERIES']) {
-                        console.log('QUERY: ' + sqlQuery);
+                        console.log('## Query: ' + sqlQuery + '; Params: ', params);
                     }
                     openConnection.query(sqlQuery, params, function (err, results) {
                         me.closeConnection(openConnection);
@@ -696,7 +696,7 @@ module.exports = (function () {
 
                     var sqlQuery = 'DELETE FROM ' + me.getTableName(collection.tableName, connection.config.schemaDB2) + whereQuery;
                     if(process.env['LOG_QUERIES']) {
-                        console.log('QUERY: ' + sqlQuery);
+                        console.log('## Query: ' + sqlQuery + '; Params: ', params);
                     }
                     openConnection.query(sqlQuery, params, function (err, result) {
                         me.closeConnection(openConnection);
