@@ -436,9 +436,6 @@ module.exports = (function () {
                     };
 
                     if (_.isArray(data) && data.length > 0) openConnection.query(query, data, callback);
-                    if(process.env['LOG_QUERIES']) {
-                        console.log('## Query: ' + sqlQuery + ';');
-                    }
                     else openConnection.query(query, callback);
                 },
                 operationCallback = function (err, conn) {
